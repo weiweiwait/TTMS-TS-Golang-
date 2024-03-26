@@ -1,0 +1,12 @@
+mysql:
+  db: mysql
+  dbHost: 127.0.0.1
+  dbPort: 3306
+  dbUser: root
+  dbPassWord: Fjw20030504
+  dbName: ttms
+
+redis:
+  addr: 127.0.0.1
+  password:
+  db: 0
