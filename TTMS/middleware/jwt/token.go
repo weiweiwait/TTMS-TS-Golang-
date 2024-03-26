@@ -56,7 +56,34 @@ func SignToken(user *model.Customer) string {
 	// you would like it to contain.
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		// iss (issuer): 签发人
-		"iss": "ttms",
+		"iss": "weiweiwait",
+		// sub (subject): 主题
+		"sub": "用户Id",
+		// Id
+		"id": Id,
+		//nbf (Not Before): 生效时间
+		"nbf": time.Now().Unix(),
+	})
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(jwtSecret)
+	// 如果签名失败
+	if err != nil {
+		return "签名失败"
+	}
+	fmt.Println(tokenString, err)
+	return tokenString
+}
+
+// 签名token
+func SignTokenManager(user *model.Manager) string {
+	// dev
+	Id := user.ID
+	// Create a new token object, specifying signing method and the claims
+	// you would like it to contain.
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		// iss (issuer): 签发人
+		"iss": "weiweiwait",
 		// sub (subject): 主题
 		"sub": "用户Id",
 		// Id
