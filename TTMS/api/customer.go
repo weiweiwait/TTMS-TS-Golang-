@@ -18,6 +18,7 @@ func SendCode(ctx *gin.Context) {
 }
 
 // 用户注册
+
 func Register(ctx *gin.Context) {
 	userService := service.NewUserService()
 	if err := ctx.ShouldBind(userService); err == nil {
@@ -42,6 +43,17 @@ func LoginByCode(ctx *gin.Context) {
 	userService := service.NewUserService()
 	if err := ctx.ShouldBind(userService); err == nil {
 		ctx.JSON(http.StatusOK, userService.LoginByCode(ctx))
+	} else {
+		ctx.JSON(http.StatusBadRequest, dto.Fail(http.StatusBadRequest, err))
+	}
+}
+
+//修改密码
+
+func UploadPassword(ctx *gin.Context) {
+	userService := service.NewUserService()
+	if err := ctx.ShouldBind(userService); err == nil {
+		ctx.JSON(http.StatusOK, userService.UpdatePassword(ctx))
 	} else {
 		ctx.JSON(http.StatusBadRequest, dto.Fail(http.StatusBadRequest, err))
 	}

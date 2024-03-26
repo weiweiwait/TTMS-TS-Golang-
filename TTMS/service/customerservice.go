@@ -117,3 +117,24 @@ func (s *UserService) LoginByCode(ctx *gin.Context) *dto.Result {
 	//返回用户信息
 	return dto.Success(e.Success, userDto)
 }
+func (s *UserService) UpdatePassword(ctx *gin.Context) *dto.Result {
+	userDao := dao.NewUserDao(ctx)
+	redisClient := conf.NewRedisClient()
+	//检查密码格式
+	if isTrue := util.VerifyPasswordFormat(s.Password); !isTrue {
+		return dto.Fail(e.WrongPasswordFormat, nil)
+	}
+	//校验验证码
+	if code := redisClient.Get(e.VerificationCodeKey + s.Email).Val(); code != s.Code || code == "" {
+		return dto.Fail(e.WrongCode, nil)
+	}
+	//修改密码
+	if err := userDao.UpdatePassword(s.Username, util.Encryption(s.Password)); err != nil {
+		return dto.Fail(e.Error, err)
+	}
+	//删除当前用户的登录状态
+	if err := redisClient.Del(e.UserLoginInfo + s.Username).Err(); err != nil {
+		return dto.Fail(e.Error, err)
+	}
+	return dto.Success(e.Success, "修改成功,请重新登录")
+}
