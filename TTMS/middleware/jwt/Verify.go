@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -22,16 +21,25 @@ func VerifyToken(c *gin.Context) {
 		// 解析错误
 		c.Abort()
 		// 返回json
-		c.JSON(http.StatusBadRequest, model.BaseResponseInstance.FailMsg(config.TokenIsNotExist))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "token is not exist",
+		})
 	} else {
 		// 解析签发时间
 		tokenTime, err := ParseTokenTime(token)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, model.BaseResponseInstance.FailMsg(config.TokenParseErr))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code": http.StatusBadRequest,
+				"msg":  "token is not error",
+			})
 		}
 		// 判断时间
 		if GetDays(int64(tokenTime.(float64)), time.Now().Unix()) > 30 {
-			c.JSON(http.StatusBadRequest, model.BaseResponseInstance.FailMsg(config.TokenIsExpire))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code": http.StatusBadRequest,
+				"msg":  "token is expire",
+			})
 		}
 		// 解析正确
 		//str := strconv.FormatFloat(Id, 'E', -1, 64)
@@ -41,8 +49,7 @@ func VerifyToken(c *gin.Context) {
 	}
 }
 
-//  通过post请求获取token
-
+// 通过post请求获取token
 func VerifyTokenByPost(c *gin.Context) {
 	token := c.PostForm("token")
 	fmt.Printf("%v \t \n", token)
@@ -50,7 +57,10 @@ func VerifyTokenByPost(c *gin.Context) {
 		//错误 直接
 		c.Abort()
 		//返回json
-		c.JSON(http.StatusBadRequest, model.BaseResponseInstance.FailMsg(config.TokenIsNotExist))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "token is not exist",
+		})
 		return
 	}
 	Id, err := ParseToken(token)
@@ -58,7 +68,10 @@ func VerifyTokenByPost(c *gin.Context) {
 		// 解析错误
 		c.Abort()
 		// 返回json
-		c.JSON(http.StatusBadRequest, model.BaseResponseInstance.FailMsg(config.TokenParseErr))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "token is erroe",
+		})
 	} else {
 		// 解析正确
 		//str := strconv.FormatFloat(Id, 'E', -1, 64)
@@ -77,41 +90,4 @@ func GetDays(start, end int64) int {
 		days = days + 1
 	}
 	return days
-}
-
-type Limiter struct {
-	mu         sync.Mutex
-	counters   map[string]int
-	threshold  int
-	windowSize time.Duration
-}
-
-// 创建 NewLimiter 函数
-func NewLimiter(threshold int, windowSize time.Duration) *Limiter {
-	return &Limiter{
-		counters:   make(map[string]int),
-		threshold:  threshold,
-		windowSize: windowSize,
-	}
-}
-func (l *Limiter) Allow(id string) bool {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
-	now := time.Now()
-
-	if counter, ok := l.counters[id]; ok {
-		if now.Sub(time.Unix(int64(counter), 0)) <= l.windowSize {
-			if counter >= l.threshold {
-				return false
-			}
-			l.counters[id] = counter + 1
-		} else {
-			l.counters[id] = 1
-		}
-	} else {
-		l.counters[id] = 1
-	}
-
-	return true
 }

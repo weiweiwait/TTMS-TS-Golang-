@@ -49,7 +49,7 @@ func TestSignTokenFunction(Id string) string {
 }
 
 // 签名token
-func SignToken(user model.Customer) string {
+func SignToken(user *model.Customer) string {
 	// dev
 	Id := user.ID
 	// Create a new token object, specifying signing method and the claims
