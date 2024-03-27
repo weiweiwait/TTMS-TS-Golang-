@@ -1,6 +1,7 @@
-package dto
+package dao
 
 import (
+	"TTMS_go/ttms/domain/models"
 	utils "TTMS_go/ttms/util"
 	"gorm.io/gorm"
 )
@@ -8,7 +9,8 @@ import (
 type UserInfo struct {
 	gorm.Model
 	Wallet int
-	Ticket string
+	Ticket []models.Ticket
+	Snack  []models.Snack
 }
 
 func (user UserInfo) TableName() string {
@@ -18,8 +20,4 @@ func FindUserInfo(id string) UserInfo {
 	u := &UserInfo{}
 	utils.DB.Where("id = ?", id).First(&u)
 	return *u
-}
-
-func RefreshUserInfo(userInfo UserInfo) {
-
 }

@@ -2,14 +2,14 @@ package models
 
 import "gorm.io/gorm"
 
-type movie struct {
+type Movie struct {
 	gorm.Model
 	Info  string
 	Name  string
 	Money float64
-	place place //申请演出厅
+	place Place //申请演出厅
 }
 
-func (movie movie) TableName() string {
+func (movie Movie) TableName() string {
 	return "movie_basic"
 }

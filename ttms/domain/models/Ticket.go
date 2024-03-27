@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type ticket struct {
+type Ticket struct {
 	gorm.Model
 	//影片名
 	Name string
@@ -27,6 +27,6 @@ type seat struct {
 	y int
 }
 
-func (ticket ticket) TableName() string {
+func (ticket Ticket) TableName() string {
 	return "ticket_basic"
 }

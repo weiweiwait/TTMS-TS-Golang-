@@ -12,6 +12,10 @@ func main() {
 	utils.InitRedis()
 	utils.DB.AutoMigrate(models.User{})
 	utils.DB.AutoMigrate(dto.UserInfo{})
+	utils.DB.AutoMigrate(models.Ticket{})
+	utils.DB.AutoMigrate(models.Place{})
+	utils.DB.AutoMigrate(models.Movie{})
+	utils.DB.AutoMigrate(models.Snack{})
 	r := router.Router()
 	r.Run("0.0.0.0:8082")
 }

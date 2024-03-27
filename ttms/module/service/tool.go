@@ -2,6 +2,7 @@ package service
 
 import (
 	"TTMS_go/ttms/domain/models"
+	dto "TTMS_go/ttms/domain/models/dao"
 	utils "TTMS_go/ttms/util"
 	"github.com/gin-gonic/gin"
 	"math/rand"
@@ -93,9 +94,13 @@ func token(c *gin.Context) string {
 }
 
 // Todo 刷新token的操作
-//func User(c *gin.Context) (models.User, dto.UserInfo) {
-//	id, _ := c.Get("userInfoId")
-//	user := models.FindUserById(strconv.Itoa(int(id.(uint64))))
-//	userinfo := dto.FindUserInfo(strconv.Itoa(user.UserInfoId))
-//	return user, userinfo
-//}
+func User(c *gin.Context) (models.User, dto.UserInfo) {
+	id, _ := c.Get("userInfoId")
+	user := models.FindUserById(strconv.Itoa(int(id.(uint64))))
+	userinfo := dto.FindUserInfo(strconv.Itoa(user.UserInfoId))
+	return user, userinfo
+}
+func upload(r *http.Request, w http.ResponseWriter, c *gin.Context) (url string) {
+	c.FormFile("picture")
+	return ""
+}
